@@ -28,20 +28,45 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
+            this.NotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.ContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.SuspendLayout();
             // 
-            // Form1
+            // NotifyIcon
+            // 
+            this.NotifyIcon.ContextMenuStrip = this.ContextMenu;
+            this.NotifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("NotifyIcon.Icon")));
+            this.NotifyIcon.Visible = true;
+            // 
+            // ContextMenu
+            // 
+            this.ContextMenu.ImageScalingSize = new System.Drawing.Size(32, 32);
+            this.ContextMenu.Name = "ContextMenu";
+            this.ContextMenu.Size = new System.Drawing.Size(61, 4);
+            // 
+            // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(1542, 799);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "FrmMain";
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.ResumeLayout(false);
 
         }
 
         #endregion
+
+        private System.Windows.Forms.NotifyIcon NotifyIcon;
+        private System.Windows.Forms.ContextMenuStrip ContextMenu;
     }
 }
 
