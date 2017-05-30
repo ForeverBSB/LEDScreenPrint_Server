@@ -27,6 +27,7 @@ namespace LEDScreenPrint_Server
         private int socketPort;
         private Socket socketServer;
         private static List<Socket> clientSockets = new List<Socket>();
+        private Thread socketThread;
 
         public FrmMain()
         {
@@ -53,12 +54,12 @@ namespace LEDScreenPrint_Server
             //获取并计算作战时间
             DateTime setNowDate = Convert.ToDateTime(ConfigHelper.ReadIniData("FightTimeSetting", "SettingNowDate", DateTime.Now.ToString(), configFilePath));
             DateDiff = DateTime.Now.Subtract(setNowDate);
-            fightDate = new DateTime(Convert.ToInt32(ConfigHelper.ReadIniData("FightTimeSetting", "FightYear", DateTime.Now.ToString("yyyy"), configFilePath)),
-                Convert.ToInt32(ConfigHelper.ReadIniData("FightTimeSetting", "FightMonth", DateTime.Now.ToString("MM"), configFilePath)),
-                Convert.ToInt32(ConfigHelper.ReadIniData("FightTimeSetting", "FightDay", DateTime.Now.ToString("dd"), configFilePath)),
-                Convert.ToInt32(ConfigHelper.ReadIniData("FightTimeSetting", "FightHour", DateTime.Now.ToString("HH"), configFilePath)),
-                Convert.ToInt32(ConfigHelper.ReadIniData("FightTimeSetting", "FightMinute", DateTime.Now.ToString("mm"), configFilePath)),
-                Convert.ToInt32(ConfigHelper.ReadIniData("FightTimeSetting", "FightSecond", DateTime.Now.ToString("ss"), configFilePath)));
+            fightDate = new DateTime(Convert.ToInt32(ConfigHelper.ReadIniData("FightTimeSetting", "FightTimeYear", DateTime.Now.ToString("yyyy"), configFilePath)),
+                Convert.ToInt32(ConfigHelper.ReadIniData("FightTimeSetting", "FightTimeMonth", DateTime.Now.ToString("MM"), configFilePath)),
+                Convert.ToInt32(ConfigHelper.ReadIniData("FightTimeSetting", "FightTimeDay", DateTime.Now.ToString("dd"), configFilePath)),
+                Convert.ToInt32(ConfigHelper.ReadIniData("FightTimeSetting", "FightTimeHour", DateTime.Now.ToString("HH"), configFilePath)),
+                Convert.ToInt32(ConfigHelper.ReadIniData("FightTimeSetting", "FightTimeMinute", DateTime.Now.ToString("mm"), configFilePath)),
+                Convert.ToInt32(ConfigHelper.ReadIniData("FightTimeSetting", "FightTimeSecond", DateTime.Now.ToString("ss"), configFilePath)));
             fightDate = fightDate.Add(DateDiff);
             //初始化Timer
             mainTimer = new System.Windows.Forms.Timer();
@@ -74,6 +75,8 @@ namespace LEDScreenPrint_Server
             getFrontSizeSetting();
             //初始化标题文字
             getTitleSetting();
+            //初始化标题字体
+            getFrontNameSetting();
         }
 
         private void MainTimer_Tick(object sender, EventArgs e)
@@ -148,6 +151,29 @@ namespace LEDScreenPrint_Server
                 float.Parse(ConfigHelper.ReadIniData("FrontSize", "TitleSize", "9", configFilePath)));
         }
 
+        private void getFrontNameSetting()
+        {
+            //获取并设置天文时间字体
+            labelTitle.Font = new Font(new FontFamily(ConfigHelper.ReadIniData("FontName", "FontName", "宋体", configFilePath)),
+                labelTitle.Font.Size);
+            labelNow.Font = new Font(new FontFamily(ConfigHelper.ReadIniData("FontName", "FontName", "宋体", configFilePath)),
+                labelNow.Font.Size);
+            labelNowDate.Font = new Font(new FontFamily(ConfigHelper.ReadIniData("FontName", "FontName", "宋体", configFilePath)),
+                labelNowDate.Font.Size);
+            labelNowWeek.Font = new Font(new FontFamily(ConfigHelper.ReadIniData("FontName", "FontName", "宋体", configFilePath)),
+                labelNowWeek.Font.Size);
+            labelNowTime.Font = new Font(new FontFamily(ConfigHelper.ReadIniData("FontName", "FontName", "宋体", configFilePath)),
+                labelNowTime.Font.Size);
+            labelFight.Font = new Font(new FontFamily(ConfigHelper.ReadIniData("FontName", "FontName", "宋体", configFilePath)),
+                labelFight.Font.Size);
+            labelFightDate.Font = new Font(new FontFamily(ConfigHelper.ReadIniData("FontName", "FontName", "宋体", configFilePath)),
+                labelFightDate.Font.Size);
+            labelFightWeek.Font = new Font(new FontFamily(ConfigHelper.ReadIniData("FontName", "FontName", "宋体", configFilePath)),
+                labelFightWeek.Font.Size);
+            labelFightTime.Font = new Font(new FontFamily(ConfigHelper.ReadIniData("FontName", "FontName", "宋体", configFilePath)),
+                labelFightTime.Font.Size);
+        }
+
         private void getTitleSetting()
         {
             labelTitle.Text = ConfigHelper.ReadIniData("Title", "Title", "", configFilePath);
@@ -159,7 +185,7 @@ namespace LEDScreenPrint_Server
                 socketServer = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 socketServer.Bind(new IPEndPoint(IPAddress.Parse(socketIPAddress), socketPort));
                 socketServer.Listen(0);
-                Thread socketThread = new Thread(ListenClientConnect);
+                socketThread = new Thread(ListenClientConnect);
                 socketThread.Start();
             }
             catch (Exception ex)
@@ -346,6 +372,18 @@ namespace LEDScreenPrint_Server
                                     Convert.ToInt32(ConfigHelper.ReadIniData("FightTimeSetting", "FightTimeSecond", DateTime.Now.ToString("ss"), configFilePath)));
                                 fightDate = fightDate.Add(DateDiff);
                                 break;
+                            case "FontName":
+                                ConfigHelper.WriteIniData("FontName", "FontName", setting[1], configFilePath);
+                                labelTitle.Font = new Font(new FontFamily(setting[1]), labelTitle.Font.Size);
+                                labelNow.Font = new Font(new FontFamily(setting[1]), labelNow.Font.Size);
+                                labelNowDate.Font = new Font(new FontFamily(setting[1]), labelNowDate.Font.Size);
+                                labelNowWeek.Font = new Font(new FontFamily(setting[1]), labelNowWeek.Font.Size);
+                                labelNowTime.Font = new Font(new FontFamily(setting[1]), labelNowTime.Font.Size);
+                                labelFight.Font = new Font(new FontFamily(setting[1]), labelFight.Font.Size);
+                                labelFightDate.Font = new Font(new FontFamily(setting[1]), labelFightDate.Font.Size);
+                                labelFightWeek.Font = new Font(new FontFamily(setting[1]), labelFightWeek.Font.Size);
+                                labelFightTime.Font = new Font(new FontFamily(setting[1]), labelFightTime.Font.Size);
+                                break;
                             
                         }
                     }
@@ -364,7 +402,8 @@ namespace LEDScreenPrint_Server
         {
             if (MessageBox.Show("是否退出软件?", "提示信息",MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                Application.Exit();
+                NotifyIcon.Visible = false;
+                System.Environment.Exit(0);
             }
         }
     }

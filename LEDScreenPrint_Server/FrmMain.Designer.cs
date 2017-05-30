@@ -57,12 +57,12 @@
             this.ContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmExit});
             this.ContextMenu.Name = "ContextMenu";
-            this.ContextMenu.Size = new System.Drawing.Size(270, 86);
+            this.ContextMenu.Size = new System.Drawing.Size(193, 42);
             // 
             // tsmExit
             // 
             this.tsmExit.Name = "tsmExit";
-            this.tsmExit.Size = new System.Drawing.Size(269, 38);
+            this.tsmExit.Size = new System.Drawing.Size(192, 38);
             this.tsmExit.Text = "退出(&X)";
             this.tsmExit.Click += new System.EventHandler(this.tsmExit_Click);
             // 
@@ -197,6 +197,7 @@
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+            this.TopMost = true;
             this.ContextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
